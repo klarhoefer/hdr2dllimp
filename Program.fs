@@ -24,9 +24,17 @@ let convFun (fn: CppFunction) =
         fn.Parameters
         |> Seq.map convParam
         |> String.concat ", "
-    printfn "[DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = \"%s\")]" fn.Name
-    printfn "public static extern %s %s(%s);" (convType fn.ReturnType.FullName) (snake2pascal fn.Name) parameters
+
+    printfn "\n    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = \"%s\")]" fn.Name
+    printfn "    public static extern %s %s(%s);" (convType fn.ReturnType.FullName) (snake2pascal fn.Name) parameters
+
+printfn """
+public static class Lib
+{
+    private const string LibName = "";"""
 
 let compilation = CppParser.ParseFile("somelib.h")
 for fn in compilation.Functions do
     convFun fn
+
+printfn "}"
